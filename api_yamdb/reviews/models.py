@@ -16,7 +16,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name = 'Категория'
-        ordering = ('name')
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -37,7 +37,7 @@ class Genre(models.Model):
 
     class Meta:
         verbose_name = 'Жанр'
-        ordering = ('name')
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -72,7 +72,7 @@ class Title(models.Model):
 
     class Meta:
         verbose_name = 'Произведение'
-        ordering = ('name')
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
