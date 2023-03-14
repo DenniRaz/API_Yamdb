@@ -13,7 +13,8 @@ class User(AbstractUser):
         'Биография',
         blank=True,
     )
-    role = models.TextChoices(
+    role = models.CharField(
         choices=CHOICES,
         default='user',
+        max_length=16,
     )
