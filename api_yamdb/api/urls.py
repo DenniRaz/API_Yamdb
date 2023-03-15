@@ -1,4 +1,4 @@
-from api.views import CommentViewSet
+from api.views import CommentViewSet, ReviewViewSet
 
 from django.urls import include, path
 
@@ -9,6 +9,11 @@ router.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
     CommentViewSet,
     basename='comments',
+)
+router.register(
+    r'titles/(?P<title_id>\d+)/reviews',
+    ReviewViewSet,
+    basename='reviews',
 )
 
 urlpatterns = [
