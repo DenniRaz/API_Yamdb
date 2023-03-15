@@ -43,6 +43,7 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
 
+
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         slug_field='username',

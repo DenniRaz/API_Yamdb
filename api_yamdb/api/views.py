@@ -1,3 +1,4 @@
+from api.mixins import ListCreateDestroyViewSet
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -46,7 +47,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.request.method in ('POST', 'PATCH'):
             return ReadOnlyTitleSerializer
         return TitleSerializer
-        
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
