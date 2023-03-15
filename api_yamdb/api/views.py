@@ -5,7 +5,7 @@ from .serializers import (CategorySerializer, GenreSerializer,
                           TitleSerializer, ReadOnlyTitleSerializer,
                           CommentSerializer, ReviewSerializer)
 from .permissions import IsAdminOrReadOnly
-from mixins import ListCreateDestroyViewSet
+from api.mixins import ListCreateDestroyViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework import pagination
@@ -41,7 +41,7 @@ class TitleViewSet(viewsets.ModelViewSet):
         if self.request.method in ('POST', 'PATCH'):
             return ReadOnlyTitleSerializer
         return TitleSerializer
-        
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
