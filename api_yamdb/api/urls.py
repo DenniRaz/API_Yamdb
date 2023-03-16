@@ -18,6 +18,6 @@ router.register(
 )
 
 urlpatterns = [
-    path('v1/auth/signup/', APISignUp.as_view()),
+    path('v1/auth/signup/', APISignUp),
     path('v1/', include(router.urls)),
 ]

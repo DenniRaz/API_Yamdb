@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from api.mixins import ListCreateDestroyViewSet
 from django.core.mail import send_mail
 from django.db.models import Avg
@@ -7,7 +9,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, pagination, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 from reviews.models import Category, Genre, Review, Title
 from users.models import EmailVerification, User
@@ -100,26 +101,32 @@ class UserViewSet(viewsets.ModelViewSet):
     # дописать для me
 
 
+@api_view(['POST'])
 @permission_classes([permissions.AllowAny])
-class APISignUp(APIView):
-    """Самостоятельная регистрация пользователями."""
-    def post(self, request):
-        pass
-        # serializer = SignUpSerializer(data=request.data)
-        # if serializer.is_valid():
-        #     email = serializer.validated_data['email']
-        #     user = serializer.validated_data['username']
-        #     # генерация кода подтверждения
-        #     confirmation_code = get_random_string(length=6)
-        #     # отправка кода подтверждения на почту
-        #     send_mail(
-        #         'Confirmation code',
-        #         f'Your confirmation code is: {confirmation_code}',
-        #         'noreply@example.com',
-        #         [serializer.validated_data['email']],
-        #     )
-        #     # confirmation_entry, created = EmailVerification.objects.get_or_create(
-        #     #                                username=user, confirmation_code=confirmation_code)
-        #     serializer.save()
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
-        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def APISignUp(request):
+    """
+    Генерация и отправка кода подтверждения на почту.
+    Создает пользователя, если его нет.
+    """
+    serializer = SignUpSerializer(data=request.data)
+    if serializer.is_valid():
+        email = serializer.validated_data['email']
+        username = serializer.validated_data['username']
+        # генерация кода подтверждения
+        confirmation_code = get_random_string(length=6)
+        # отправка кода подтверждения на почту
+        send_mail(
+            'Confirmation code',
+            f'Your confirmation code is: {confirmation_code}',
+            'noreply@example.com',
+            [email],
+        )
+        # запоминаем кому и какой мы направили код веривикации
+        confirmation_obj, created = EmailVerification.objects.get_or_create(
+            username=username)
+        confirmation_obj.confirmation_code = confirmation_code
+        # создаем пользователя, если его не было
+        if username not in User.objects.values_list('username', flat=True):
+            serializer.save()
+        return Response(serializer.data, status=HTTPStatus.OK)
+    return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
