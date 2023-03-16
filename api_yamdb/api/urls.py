@@ -1,4 +1,5 @@
-from api.views import CommentViewSet, ReviewViewSet
+from api.views import (CategoryViewSet, CommentViewSet,
+                       GenreViewSet, TitleViewSet, ReviewViewSet)
 
 from django.urls import include, path
 
@@ -15,6 +16,9 @@ router.register(
     ReviewViewSet,
     basename='reviews',
 )
+router.register(r'categories', CategoryViewSet)
+router.register(r'genres', GenreViewSet)
+router.register(r'titles', TitleViewSet)
 
 urlpatterns = [
     path('v1/', include(router.urls)),
