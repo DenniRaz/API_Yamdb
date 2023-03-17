@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import User
+from users.models import EmailVerification, User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -87,3 +87,12 @@ class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email')
+
+
+class EmailVerificationSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
+
+    class Meta:
+        model = EmailVerification
+        fields = '__all__'

@@ -1,4 +1,4 @@
-from api.views import APISignUp, CommentViewSet, ReviewViewSet, UserViewSet
+from api.views import APISignUp, CommentViewSet, GetJWTToken, ReviewViewSet, UserViewSet
 from django.urls import include, path
 from rest_framework import routers
 
@@ -19,5 +19,6 @@ router.register(
 
 urlpatterns = [
     path('v1/auth/signup/', APISignUp),
+    path('v1/auth/token/', GetJWTToken),
     path('v1/', include(router.urls)),
 ]
