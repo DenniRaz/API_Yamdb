@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-
-from reviews.models import Category, Genre, Title, Comment, Review
+from reviews.models import Category, Comment, Genre, Review, Title
+from users.models import EmailVerification, User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -77,3 +77,33 @@ class ReviewSerializer(serializers.ModelSerializer):
                 'На одно произведение можно написать один отзыв!'
             )
         return attrs
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role',)
+        lookup_field = 'username'
+
+
+class SignUpSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+    )
+    username = serializers.CharField(
+        required=True,
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+
+
+class EmailVerificationSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    confirmation_code = serializers.CharField(required=True)
+
+    class Meta:
+        model = EmailVerification
+        fields = '__all__'
