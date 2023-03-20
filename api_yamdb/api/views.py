@@ -50,14 +50,14 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
         Avg("reviews__score")
     ).order_by("name")
-    serializer_class = TitleSerializer
+    # serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = [DjangoFilterBackend]
 
     def get_serializer_class(self):
         if self.request.method in ('POST', 'PATCH'):
-            return ReadOnlyTitleSerializer
-        return TitleSerializer
+            return TitleSerializer
+        return ReadOnlyTitleSerializer
 
 
 class CommentViewSet(viewsets.ModelViewSet):
