@@ -14,7 +14,7 @@ from reviews.models import Category, Genre, Review, Title
 from users.models import EmailVerification, User
 
 from .mixins import ListCreateDestroyViewSet
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsAuthorOrModeratorOrAdmin
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -63,6 +63,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     pagination_class = pagination.PageNumberPagination
+    permission_classes = (IsAuthorOrModeratorOrAdmin,)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
@@ -83,6 +84,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     pagination_class = pagination.PageNumberPagination
+    permission_classes = (IsAuthorOrModeratorOrAdmin,)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
