@@ -13,7 +13,7 @@ class Category(models.Model):
     )
     slug = models.SlugField(
         verbose_name='ID',
-        max_length=99,
+        max_length=50,
         unique=True
     )
 
@@ -34,7 +34,7 @@ class Genre(models.Model):
     )
     slug = models.SlugField(
         verbose_name='ID',
-        max_length=99,
+        max_length=50,
         unique=True
     )
 
