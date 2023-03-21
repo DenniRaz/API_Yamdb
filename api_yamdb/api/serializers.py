@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import EmailVerification, User
 
@@ -81,10 +82,20 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        max_length=254,
+    )
+
+    def validate_email(self, value):
+        if value in User.objects.values_list('email', flat=True):
+            raise serializers.ValidationError('Указанный email используется')
+        return value
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role',)
+        fields = ('username', 'email', 'first_name',
+                  'last_name', 'bio', 'role',)
         lookup_field = 'username'
 
 
@@ -100,7 +111,14 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data['username'] == 'me':
-            raise serializers.ValidationError('Нельзя')
+            raise serializers.ValidationError('Имя me недоступно')
+        if (data['email'] in User.objects.values_list('email', flat=True)
+           and data['username'] not in User.objects.values_list('username', flat=True)):
+            raise serializers.ValidationError('Email занят')
+        if User.objects.filter(username=data['username']).exists():
+            user = User.objects.get(username=data['username'])
+            if user.email != data['email']:
+                raise serializers.ValidationError('Email указан неверно')
         return data
 
     class Meta:
