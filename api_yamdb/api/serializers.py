@@ -68,6 +68,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'score', 'pub_date',)
         read_only_fields = ('id', 'pub_date',)
 
+    # этот валидатор провоцирует ошибку при patch запросе автора, надо как-то поправить
     def validate(self, attrs):
         user = self.context['request'].user
         title_id = self.context['request'].parser_context['kwargs']['title_id']
@@ -90,10 +91,17 @@ class UserSerializer(serializers.ModelSerializer):
 class SignUpSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
+        max_length=254,
     )
     username = serializers.CharField(
         required=True,
+        max_length=150,
     )
+
+    def validate(self, data):
+        if data['username'] == 'me':
+            raise serializers.ValidationError('Нельзя')
+        return data
 
     class Meta:
         model = User

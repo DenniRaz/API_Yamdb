@@ -14,7 +14,7 @@ from reviews.models import Category, Genre, Review, Title
 from users.models import EmailVerification, User
 
 from .mixins import ListCreateDestroyViewSet
-from .permissions import IsAdminOrReadOnly, IsAuthorOrModeratorOrAdmin
+from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrModeratorOrAdmin
 from .serializers import (
     CategorySerializer,
     CommentSerializer,
@@ -101,7 +101,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (IsAdmin,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("username",)
     lookup_field = "username"
