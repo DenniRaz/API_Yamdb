@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
@@ -112,8 +113,11 @@ class SignUpSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data['username'] == 'me':
             raise serializers.ValidationError('Имя me недоступно')
+        if not re.findall(r'^[\w.\@\+\-]+', data['username']):
+            raise serializers.ValidationError('Недопустимые символы в имени')
         if (data['email'] in User.objects.values_list('email', flat=True)
-           and data['username'] not in User.objects.values_list('username', flat=True)):
+           and data['username'] not in User.objects.values_list('username',
+                                                                flat=True)):
             raise serializers.ValidationError('Email занят')
         if User.objects.filter(username=data['username']).exists():
             user = User.objects.get(username=data['username'])
