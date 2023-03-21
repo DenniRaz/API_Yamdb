@@ -70,8 +70,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'author', 'score', 'pub_date',)
         read_only_fields = ('id', 'pub_date',)
 
-    # этот валидатор провоцирует ошибку при patch запросе автора, надо как-то поправить
     def validate(self, attrs):
+        if self.context['request'].method != 'POST':
+            return attrs
         user = self.context['request'].user
         title_id = self.context['request'].parser_context['kwargs']['title_id']
         title = get_object_or_404(Title, pk=title_id)
