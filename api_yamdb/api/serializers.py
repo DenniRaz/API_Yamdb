@@ -1,7 +1,6 @@
 import re
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework.validators import UniqueTogetherValidator
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import EmailVerification, User
 
