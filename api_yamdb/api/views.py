@@ -13,6 +13,7 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from reviews.models import Category, Genre, Review, Title
 from users.models import EmailVerification, User
 
+from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import IsAdmin, IsAdminOrReadOnly, IsAuthorOrModeratorOrAdmin
 from .serializers import (
@@ -48,12 +49,12 @@ class GenreViewSet(ListCreateDestroyViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
-        Avg("reviews__score")
-    ).order_by("name", "genre")
-    serializer_class = TitleSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    filter_backends = [DjangoFilterBackend]
+        rating=Avg('reviews__score')
+    ).order_by('-id')
     pagination_class = pagination.PageNumberPagination
+    permission_classes = [IsAdminOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         if self.request.method in ('POST', 'PATCH',):
