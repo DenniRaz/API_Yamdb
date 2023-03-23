@@ -23,7 +23,9 @@ router.register(
     basename='reviews',
 )
 router.register(
-    r'users', UserViewSet,
+    r'users',
+    UserViewSet,
+    basename='users',
 )
 router.register(r'categories', CategoryViewSet)
 router.register(r'genres', GenreViewSet)

@@ -6,7 +6,6 @@ from users.models import EmailVerification, User
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Category
         exclude = ('id',)
@@ -14,7 +13,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Genre
         exclude = ('id',)
@@ -43,10 +41,15 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ('id', 'name', 'year',
-                  'description', 'genre',
-                  'category', 'rating',
-                  )
+        fields = (
+            'id',
+            'name',
+            'year',
+            'description',
+            'genre',
+            'category',
+            'rating',
+        )
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -119,8 +122,8 @@ class SignUpSerializer(serializers.ModelSerializer):
         if not re.findall(r'^[\w.\@\+\-]+', data['username']):
             raise serializers.ValidationError('Недопустимые символы в имени')
         if (data['email'] in User.objects.values_list('email', flat=True)
-           and data['username'] not in User.objects.values_list('username',
-                                                                flat=True)):
+                and data['username'] not in User.objects.values_list('username',
+                                                                     flat=True)):
             raise serializers.ValidationError('Email занят')
         if User.objects.filter(username=data['username']).exists():
             user = User.objects.get(username=data['username'])

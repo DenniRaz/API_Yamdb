@@ -6,8 +6,13 @@ import csv
 import os
 
 from reviews.models import (
-    Category, Comment, Genre,
-    GenreTitle, Review, Title)
+    Category,
+    Comment,
+    Genre,
+    GenreTitle,
+    Review,
+    Title,
+)
 from users.models import User
 
 
@@ -32,7 +37,7 @@ class Command(BaseCommand):
                 bio=row[4],
                 first_name=row[5],
                 last_name=row[6])
-        print('Пользователи из csv-файла добавлены в БД')
+        self.stdout.write('Пользователи из csv-файла добавлены в БД')
 
         csv = locations('category.csv')
         next(csv, None)
@@ -41,7 +46,7 @@ class Command(BaseCommand):
                 id=row[0],
                 name=row[1],
                 slug=row[2])
-        print('Категории из csv-файла добавлены в БД')
+        self.stdout.write('Категории из csv-файла добавлены в БД')
 
         csv = locations('genre.csv')
         next(csv, None)
@@ -50,7 +55,7 @@ class Command(BaseCommand):
                 id=row[0],
                 name=row[1],
                 slug=row[2])
-        print('Жанры из csv-файла добавлены в БД')
+        self.stdout.write('Жанры из csv-файла добавлены в БД')
 
         csv = locations('titles.csv')
         next(csv, None)
@@ -62,7 +67,7 @@ class Command(BaseCommand):
                 category=get_object_or_404(
                     Category, id=row[3]
                 )))
-        print('Произведения из csv-файла добавлены в БД')
+        self.stdout.write('Произведения из csv-файла добавлены в БД')
 
         csv = locations('genre_title.csv')
         next(csv, None)
@@ -71,7 +76,7 @@ class Command(BaseCommand):
                 id=row[0],
                 title=get_object_or_404(Title, id=row[1]),
                 genre=get_object_or_404(Genre, id=row[2])))
-        print('Произведение-жанр из csv-файла добавлены в БД')
+        self.stdout.write('Произведение-жанр из csv-файла добавлены в БД')
 
         csv = locations('review.csv')
         next(csv, None)
@@ -83,7 +88,7 @@ class Command(BaseCommand):
                 author=get_object_or_404(User, id=row[3]),
                 score=row[4],
                 pub_date=row[5]))
-        print('Отзывы из csv-файла добавлены в БД')
+        self.stdout.write('Отзывы из csv-файла добавлены в БД')
 
         csv = locations('comments.csv')
         next(csv, None)
@@ -94,4 +99,4 @@ class Command(BaseCommand):
                 text=row[2],
                 author=get_object_or_404(User, id=row[3]),
                 pub_date=row[4]))
-        print('Комментарии из csv-файла добавлены в БД')
+        self.stdout.write('Комментарии из csv-файла добавлены в БД')
