@@ -1,6 +1,8 @@
+from django.utils import timezone
 import re
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import EmailVerification, User
 
@@ -30,6 +32,13 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = '__all__'
+
+    def validate_year(self, value):
+        if value > timezone.now().year:
+            raise ValidationError(
+                'Год не может быть больше текущего'
+            )
+        return value
 
 
 class ReadOnlyTitleSerializer(serializers.ModelSerializer):
