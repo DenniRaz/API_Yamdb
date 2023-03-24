@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 User = settings.AUTH_USER_MODEL
@@ -138,8 +139,12 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='Автор отзыва',
     )
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         choices=SCORE_CHOICES,
+        validators=(
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ),
         verbose_name='Рейтинг произведения',
     )
     pub_date = models.DateTimeField(

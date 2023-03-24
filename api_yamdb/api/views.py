@@ -155,7 +155,7 @@ def GetJWTToken(request):
     в обмен на username и confirmation code.
     """
     serializer = EmailVerificationSerializer(data=request.data)
-    if serializer.is_valid():
+    if serializer.is_valid(raise_exception=True):
         data = serializer.validated_data
         user = get_object_or_404(User, username=data['username'])
         # проверка кода верификации ранее направленному на почту
