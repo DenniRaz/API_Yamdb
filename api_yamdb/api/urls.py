@@ -1,4 +1,5 @@
-from api.views import (
+from django.urls import path, include
+from .views import (
     APISignUp,
     CategoryViewSet,
     CommentViewSet,
@@ -8,7 +9,6 @@ from api.views import (
     TitleViewSet,
     UserViewSet,
 )
-from django.urls import include, path
 from rest_framework import routers
 
 router = routers.DefaultRouter()
