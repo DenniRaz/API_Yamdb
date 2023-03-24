@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from api.mixins import ListCreateDestroyViewSet
 from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
@@ -11,7 +12,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title
-from users.models import EmailVerification, User
+from users.models import User
 
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
@@ -108,7 +109,7 @@ class UserViewSet(viewsets.ModelViewSet):
             methods=['GET', 'PATCH'],
             permission_classes=[permissions.IsAuthenticated, ])
     def me(self, request):
-        me = get_object_or_404(User, username=request.user.username)
+        me = request.user
         serializer = UserSerializer(me, data=request.data, partial=True)
         if serializer.is_valid():
             # предотвращаем самостоятельное изменение роли юзером
@@ -128,8 +129,11 @@ def APISignUp(request):
     if serializer.is_valid():
         email = serializer.validated_data['email']
         username = serializer.validated_data['username']
+        # создаем или получаем модель пользователя
+        user, created = User.objects.get_or_create(username=username,
+                                                   email=email)
         # генерация кода верификации
-        confirmation_code = get_random_string(length=6)
+        confirmation_code = default_token_generator.make_token(user)
         # отправка кода верификации на почту
         send_mail(
             'Confirmation code',
@@ -137,14 +141,8 @@ def APISignUp(request):
             'noreply@example.com',
             [email],
         )
-        # запоминаем кому и какой мы направили код верификации
-        confirmation_obj, created = EmailVerification.objects.get_or_create(
-            username=username)
-        confirmation_obj.confirmation_code = confirmation_code
-        confirmation_obj.save()
-        # создаем пользователя, если его не было
-        if username not in User.objects.values_list('username', flat=True):
-            serializer.save()
+        user.confirmation_code = confirmation_code
+        user.save()
         return Response(serializer.data, status=HTTPStatus.OK)
     return Response(serializer.errors, status=HTTPStatus.BAD_REQUEST)
 
@@ -160,14 +158,13 @@ def GetJWTToken(request):
     if serializer.is_valid():
         data = serializer.validated_data
         user = get_object_or_404(User, username=data['username'])
-        confirmation_obj = get_object_or_404(EmailVerification,
-                                             username=data['username'])
         # проверка кода верификации ранее направленному на почту
-        if data['confirmation_code'] == confirmation_obj.confirmation_code:
+        if default_token_generator.check_token(user,
+                                               data['confirmation_code']):
             # подставим в обект модели confirmation_obj иной confirmation_code,
             # чтобы полученным на почту кодом можно было воспользоваться раз
-            confirmation_obj.confirmation_code = get_random_string(length=6)
-            confirmation_obj.save()
+            user.confirmation_code = default_token_generator.make_token(user)
+            user.save()
             # создание access_token для пользователя
             token = RefreshToken.for_user(user).access_token
             return Response({'token': str(token)}, status=HTTPStatus.CREATED)

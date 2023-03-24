@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import EmailVerification, User
+from users.models import User
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -130,9 +130,8 @@ class SignUpSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Имя me недоступно')
         if not re.findall(r'^[\w.\@\+\-]+', data['username']):
             raise serializers.ValidationError('Недопустимые символы в имени')
-        if (data['email'] in User.objects.values_list('email', flat=True)
-                and data['username'] not in User.objects.values_list('username',
-                                                                     flat=True)):
+        if (User.objects.filter(email=data['email']).exists()
+           and not User.objects.filter(username=data['username']).exists()):
             raise serializers.ValidationError('Email занят')
         if User.objects.filter(username=data['username']).exists():
             user = User.objects.get(username=data['username'])
@@ -150,5 +149,5 @@ class EmailVerificationSerializer(serializers.Serializer):
     confirmation_code = serializers.CharField(required=True)
 
     class Meta:
-        model = EmailVerification
+        model = User
         fields = '__all__'

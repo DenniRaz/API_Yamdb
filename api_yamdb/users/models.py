@@ -22,6 +22,11 @@ class User(AbstractUser):
         max_length=16,
     )
 
+    confirmation_code = models.CharField(
+        max_length=32,
+        null=True,
+    )
+
     def save(self, *args, **kwargs):
         if self.is_superuser is True:
             self.role = self.admin
@@ -38,14 +43,3 @@ class User(AbstractUser):
     @property
     def is_user(self):
         return self.role == self.user
-
-
-class EmailVerification(models.Model):
-    username = models.CharField(
-        max_length=150,
-        null=True,
-    )
-    confirmation_code = models.CharField(
-        max_length=6,
-        null=True,
-    )
