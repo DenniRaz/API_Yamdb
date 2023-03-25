@@ -31,8 +31,12 @@ router.register(r'categories', CategoryViewSet)
 router.register(r'genres', GenreViewSet)
 router.register(r'titles', TitleViewSet)
 
+auth_urlpatterns = [
+    path('signup/', APISignUp),
+    path('token/', GetJWTToken),
+]
+
 urlpatterns = [
-    path('v1/auth/signup/', APISignUp),
-    path('v1/auth/token/', GetJWTToken),
+    path('v1/auth/', include(auth_urlpatterns)),
     path('v1/', include(router.urls)),
 ]
