@@ -2,7 +2,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -43,10 +42,11 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'api_yamdb.urls'
 
 TEMPLATES_DIR = BASE_DIR / 'templates'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATES_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -123,7 +123,6 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
 }
 
-#  подключаем движок filebased.EmailBackend
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-# указываем директорию, в которую будут складываться файлы писем
+
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
